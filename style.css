@@ -1,0 +1,235 @@
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Segoe UI', Arial, sans-serif;
+  background: #0a0e1a;
+  color: #e2e8f0;
+  min-height: 100vh;
+}
+
+/* ============ MAIN VIEW ============ */
+#main-view {
+  padding: 24px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+header {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+h1 {
+  font-size: 1.9rem;
+  color: #38bdf8;
+  margin-bottom: 6px;
+}
+
+.subtitle {
+  color: #94a3b8;
+  font-size: 0.9rem;
+}
+
+/* ============ LEGEND ============ */
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.legend-item {
+  padding: 4px 12px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  color: #fff;
+  font-weight: 500;
+}
+
+/* ============ PERIODIC TABLE ============ */
+.table-wrapper {
+  overflow-x: auto;
+  padding-bottom: 12px;
+}
+
+.periodic-table {
+  display: grid;
+  grid-template-columns: repeat(18, minmax(56px, 1fr));
+  grid-auto-rows: 56px;
+  gap: 4px;
+  min-width: 1050px;
+}
+
+.element {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s;
+  font-size: 0.7rem;
+  line-height: 1.1;
+  padding: 3px;
+  user-select: none;
+  border: 1px solid rgba(255,255,255,0.08);
+}
+
+.element:hover {
+  transform: scale(1.15);
+  box-shadow: 0 0 16px rgba(56,189,248,0.9);
+  z-index: 10;
+  border-color: #38bdf8;
+}
+
+.element .number { font-size: 0.55rem; opacity: 0.75; }
+.element .symbol { font-size: 1.05rem; font-weight: 700; }
+.element .name { font-size: 0.5rem; opacity: 0.85; text-align: center; }
+
+/* Category colors */
+.cat-alkali-metal       { background: #ef4444; }
+.cat-alkaline-earth     { background: #f97316; }
+.cat-transition-metal   { background: #eab308; color: #1e293b; }
+.cat-post-transition    { background: #22c55e; }
+.cat-metalloid          { background: #14b8a6; }
+.cat-nonmetal           { background: #06b6d4; }
+.cat-halogen            { background: #8b5cf6; }
+.cat-noble-gas          { background: #ec4899; }
+.cat-lanthanide         { background: #a855f7; }
+.cat-actinide           { background: #d946ef; }
+.cat-unknown            { background: #64748b; }
+
+/* ============ DETAIL VIEW ============ */
+#detail-view {
+  padding: 24px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.detail-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.nav-btn {
+  background: #1e293b;
+  color: #e2e8f0;
+  border: 1px solid #334155;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 500;
+  transition: all 0.15s;
+}
+
+.nav-btn:hover {
+  background: #334155;
+  border-color: #38bdf8;
+  color: #38bdf8;
+}
+
+.nav-group { display: flex; gap: 8px; }
+
+.detail-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+@media (max-width: 900px) {
+  .detail-content { grid-template-columns: 1fr; }
+}
+
+/* ============ INFO CARD ============ */
+.info-card {
+  background: #131a2b;
+  border: 1px solid #1e293b;
+  border-radius: 12px;
+  padding: 24px;
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+}
+
+.element-badge {
+  min-width: 130px;
+  width: 130px;
+  height: 130px;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.badge-z { font-size: 0.75rem; align-self: flex-start; opacity: 0.85; }
+.badge-symbol { font-size: 3rem; font-weight: 700; line-height: 1; }
+.badge-mass { font-size: 0.75rem; opacity: 0.85; }
+
+.element-info { flex: 1; }
+
+.element-info h2 {
+  font-size: 2rem;
+  color: #f1f5f9;
+  margin-bottom: 12px;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+
+.tag {
+  background: #1e293b;
+  color: #cbd5e1;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 0.72rem;
+  font-weight: 500;
+  border: 1px solid #334155;
+}
+
+.props > div {
+  margin-bottom: 8px;
+  font-size: 0.9rem;
+}
+
+.label { color: #94a3b8; margin-right: 6px; }
+
+/* ============ BOHR MODEL ============ */
+.bohr-card {
+  background: #131a2b;
+  border: 1px solid #1e293b;
+  border-radius: 12px;
+  padding: 16px;
+  position: relative;
+  min-height: 400px;
+}
+
+#bohr-container {
+  width: 100%;
+  height: 420px;
+  border-radius: 8px;
+  overflow: hidden;
+  background: radial-gradient(circle at center, #0f1a2e 0%, #060912 100%);
+}
+
+.bohr-label {
+  position: absolute;
+  bottom: 22px;
+  left: 26px;
+  font-size: 0.72rem;
+  color: #64748b;
+  pointer-events: none;
+}
