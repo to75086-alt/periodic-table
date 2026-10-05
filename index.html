@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Interactive Periodic Table</title>
+<link rel="stylesheet" href="style.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+</head>
+<body>
+
+<!-- ============ MAIN TABLE VIEW ============ -->
+<div id="main-view">
+  <header>
+    <h1>⚛️ Interactive Periodic Table</h1>
+    <p class="subtitle">Click any element to view details and 3D Bohr model</p>
+  </header>
+
+  <div class="legend" id="legend"></div>
+
+  <div class="table-wrapper">
+    <div class="periodic-table" id="table"></div>
+  </div>
+</div>
+
+<!-- ============ DETAIL VIEW ============ -->
+<div id="detail-view" style="display:none;">
+  <header class="detail-header">
+    <button id="back-btn" class="nav-btn">← Back to Table</button>
+    <div class="nav-group">
+      <button id="prev-btn" class="nav-btn">← Previous</button>
+      <button id="next-btn" class="nav-btn">Next →</button>
+    </div>
+  </header>
+
+  <div class="detail-content">
+    <!-- Left: element info -->
+    <div class="info-card">
+      <div class="element-badge" id="d-badge">
+        <div class="badge-z" id="d-z">1</div>
+        <div class="badge-symbol" id="d-symbol">H</div>
+        <div class="badge-mass" id="d-mass">1.008</div>
+      </div>
+      <div class="element-info">
+        <h2 id="d-name">Hydrogen</h2>
+        <div class="tags" id="d-tags"></div>
+        <div class="props">
+          <div><span class="label">Configuration:</span> <span id="d-config">1s¹</span></div>
+          <div><span class="label">Atomic mass:</span> <span id="d-mass2">1.008 u</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: 3D Bohr model -->
+    <div class="bohr-card">
+      <div id="bohr-container"></div>
+      <div class="bohr-label">Bohr model · drag to rotate · scroll to zoom</div>
+    </div>
+  </div>
+</div>
+
+<script src="data.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
