@@ -2,7 +2,6 @@
    INTERACTIVE PERIODIC TABLE + 3D BOHR MODEL
    ============================================================ */
 
-/* ---------- Category mapping (từ JSON gốc → class CSS) ---------- */
 const CATEGORY_MAP = {
   "alkali metal":            { cls: "cat-alkali-metal",     label: "Alkali Metal" },
   "alkaline earth metal":    { cls: "cat-alkaline-earth",   label: "Alkaline Earth" },
@@ -32,7 +31,8 @@ function getCat(catName) {
   return { cls: "cat-unknown", label: catName };
 }
 
-/* ---------- Build main table ---------- */
+const VALID_ELEMENTS = elements.filter(el => el.number >= 1 && el.number <= 118);
+
 const table = document.getElementById("table");
 const legendEl = document.getElementById("legend");
 
@@ -42,7 +42,7 @@ function getGridPos(el) {
   return { row: el.period, col: el.group };
 }
 
-elements.forEach(el => {
+VALID_ELEMENTS.forEach(el => {
   const pos = getGridPos(el);
   const cat = getCat(el.category);
   const div = document.createElement("div");
@@ -58,7 +58,6 @@ elements.forEach(el => {
   table.appendChild(div);
 });
 
-/* ---------- Legend ---------- */
 const LEGEND_ITEMS = [
   ["cat-alkali-metal",     "Alkali Metal"],
   ["cat-alkaline-earth",   "Alkaline Earth"],
@@ -79,10 +78,14 @@ LEGEND_ITEMS.forEach(([cls, label]) => {
   legendEl.appendChild(s);
 });
 
-/* ---------- Detail view ---------- */
 const mainView   = document.getElementById("main-view");
 const detailView = document.getElementById("detail-view");
 let currentEl = null;
+
+function safe(val, fallback = "—") {
+  if (val === null || val === undefined || val === "" || Number.isNaN(val)) return fallback;
+  return val;
+}
 
 function showDetail(el) {
   currentEl = el;
@@ -97,8 +100,22 @@ function showDetail(el) {
   document.getElementById("d-symbol").textContent = el.symbol;
   document.getElementById("d-mass").textContent = el.atomicMass;
   document.getElementById("d-name").textContent = el.name;
-  document.getElementById("d-config").textContent = el.electronConfiguration || "—";
-  document.getElementById("d-mass2").textContent = el.atomicMass + " u";
+
+  document.getElementById("d-config").textContent = safe(el.electronConfiguration);
+  document.getElementById("d-mass2").textContent = safe(el.atomicMass) + " u";
+
+  const en = el.electronegativity_pauling;
+  document.getElementById("d-en").textContent = en != null ? en : "—";
+
+  const ar = el.atomic_radius;
+  document.getElementById("d-ar").textContent = ar != null ? ar + " pm" : "—";
+
+  const mass = parseFloat(el.atomicMass);
+  const neutrons = (!isNaN(mass)) ? Math.round(mass) - el.number : null;
+  document.getElementById("d-neutrons").textContent = neutrons != null ? neutrons : "—";
+
+  const about = safe(el.summary, "No description available.");
+  document.getElementById("d-about").textContent = about;
 
   const tagsEl = document.getElementById("d-tags");
   tagsEl.innerHTML = "";
@@ -125,19 +142,16 @@ document.getElementById("back-btn").addEventListener("click", () => {
 });
 
 document.getElementById("prev-btn").addEventListener("click", () => {
-  const idx = elements.findIndex(e => e.number === currentEl.number);
-  if (idx > 0) showDetail(elements[idx - 1]);
+  const idx = VALID_ELEMENTS.findIndex(e => e.number === currentEl.number);
+  if (idx > 0) showDetail(VALID_ELEMENTS[idx - 1]);
 });
 
 document.getElementById("next-btn").addEventListener("click", () => {
-  const idx = elements.findIndex(e => e.number === currentEl.number);
-  if (idx < elements.length - 1) showDetail(elements[idx + 1]);
+  const idx = VALID_ELEMENTS.findIndex(e => e.number === currentEl.number);
+  if (idx < VALID_ELEMENTS.length - 1) showDetail(VALID_ELEMENTS[idx + 1]);
 });
 
-/* ============================================================
-   3D BOHR MODEL with Three.js
-   ============================================================ */
-let scene, camera, renderer, animationId, controls;
+let scene, camera, renderer, animationId;
 let shellData = [];
 
 function disposeBohr() {
@@ -147,7 +161,6 @@ function disposeBohr() {
   scene = null; camera = null; renderer = null;
 }
 
-/* Phân bố electron theo lớp: 2, 8, 18, 32... */
 function getShellDistribution(z) {
   const maxPerShell = [2, 8, 18, 32, 32, 18, 8];
   const shells = [];
@@ -160,7 +173,6 @@ function getShellDistribution(z) {
   return shells;
 }
 
-/* Xoay/zoom bằng chuột — code orbit đơn giản */
 function makeOrbitControls(camera, domElement, target) {
   let isDown = false, px = 0, py = 0;
   let theta = 0, phi = Math.PI / 3, radius = 22;
@@ -193,7 +205,6 @@ function makeOrbitControls(camera, domElement, target) {
     update();
   }, { passive: false });
 
-  /* Touch cho mobile */
   domElement.addEventListener("touchstart", e => {
     if (e.touches.length === 1) {
       isDown = true;
@@ -217,6 +228,30 @@ function makeOrbitControls(camera, domElement, target) {
   return { update };
 }
 
+function makeNucleusTexture(charge) {
+  const canvas = document.createElement("canvas");
+  canvas.width = 1024;
+  canvas.height = 512;
+  const ctx = canvas.getContext("2d");
+
+  const grad = ctx.createLinearGradient(0, 0, 0, canvas.height);
+  grad.addColorStop(0, "#e2e8f0");
+  grad.addColorStop(0.5, "#cbd5e1");
+  grad.addColorStop(1, "#94a3b8");
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  ctx.fillStyle = "#0f172a";
+  ctx.font = "bold 180px 'Segoe UI', Arial, sans-serif";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText("+" + charge, canvas.width / 2, canvas.height / 2);
+
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.needsUpdate = true;
+  return texture;
+}
+
 function buildBohrModel(el) {
   disposeBohr();
   const container = document.getElementById("bohr-container");
@@ -231,50 +266,43 @@ function buildBohrModel(el) {
   renderer.setPixelRatio(window.devicePixelRatio);
   container.appendChild(renderer.domElement);
 
-  /* Ánh sáng */
-  scene.add(new THREE.AmbientLight(0xffffff, 0.6));
+  scene.add(new THREE.AmbientLight(0xffffff, 0.7));
   const light = new THREE.PointLight(0xffffff, 1.2);
   light.position.set(15, 15, 15);
   scene.add(light);
 
-  /* Hạt nhân */
-  const nucleusRadius = 0.9 + Math.log10(el.number + 1) * 0.35;
-  const nucleusGeo = new THREE.SphereGeometry(nucleusRadius, 32, 32);
+  const nucleusRadius = 1.1 + Math.log10(el.number + 1) * 0.4;
+  const nucleusGeo = new THREE.SphereGeometry(nucleusRadius, 48, 48);
+  const texture = makeNucleusTexture(el.number);
   const nucleusMat = new THREE.MeshPhongMaterial({
-    color: 0x94a3b8,
-    emissive: 0x475569,
-    shininess: 80
+    map: texture,
+    shininess: 60
   });
   const nucleus = new THREE.Mesh(nucleusGeo, nucleusMat);
   scene.add(nucleus);
 
-  /* Các lớp vỏ + electron */
   const shells = getShellDistribution(el.number);
   shellData = [];
 
   shells.forEach((count, i) => {
-    const orbitRadius = nucleusRadius + 1.8 + i * 1.6;
+    const orbitRadius = nucleusRadius + 2 + i * 1.7;
 
-    /* Vẽ đường quỹ đạo */
     const curve = new THREE.EllipseCurve(0, 0, orbitRadius, orbitRadius, 0, 2 * Math.PI);
-    const points = curve.getPoints(64);
+    const points = curve.getPoints(80);
     const geo = new THREE.BufferGeometry().setFromPoints(points);
     const mat = new THREE.LineBasicMaterial({
       color: 0x334155,
       transparent: true,
-      opacity: 0.6
+      opacity: 0.7
     });
     const orbit = new THREE.LineLoop(geo, mat);
-
-    /* Nghiêng quỹ đạo theo các góc khác nhau */
     orbit.rotation.x = Math.PI / 2 + (i % 2 === 0 ? 0.35 : -0.35);
     orbit.rotation.y = i * 0.4;
     orbit.rotation.z = i * 0.25;
     scene.add(orbit);
 
-    /* Electron */
     const electrons = [];
-    const eGeo = new THREE.SphereGeometry(0.22, 16, 16);
+    const eGeo = new THREE.SphereGeometry(0.24, 16, 16);
     const eMat = new THREE.MeshPhongMaterial({
       color: 0x38bdf8,
       emissive: 0x0284c7,
@@ -283,7 +311,6 @@ function buildBohrModel(el) {
 
     for (let j = 0; j < count; j++) {
       const e = new THREE.Mesh(eGeo, eMat);
-      /* Gán vào một group xoay theo orbit */
       const group = new THREE.Group();
       group.rotation.copy(orbit.rotation);
       group.add(e);
@@ -300,11 +327,9 @@ function buildBohrModel(el) {
     shellData.push({ electrons, orbitRadius });
   });
 
-  /* Controls */
   const target = new THREE.Vector3(0, 0, 0);
-  controls = makeOrbitControls(camera, renderer.domElement, target);
+  makeOrbitControls(camera, renderer.domElement, target);
 
-  /* Animation loop */
   function animate() {
     animationId = requestAnimationFrame(animate);
 
@@ -324,7 +349,6 @@ function buildBohrModel(el) {
   animate();
 }
 
-/* Resize */
 window.addEventListener("resize", () => {
   if (!renderer || !camera) return;
   const container = document.getElementById("bohr-container");
