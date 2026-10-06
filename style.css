@@ -233,3 +233,21 @@ h1 {
   color: #64748b;
   pointer-events: none;
 }
+.about-block {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid #334155;
+}
+
+.about-block .label {
+  display: block;
+  margin-bottom: 6px;
+  color: #38bdf8;
+  font-weight: 600;
+}
+
+.about-block p {
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: #cbd5e1;
+}
