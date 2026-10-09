@@ -162,32 +162,47 @@ function disposeBohr() {
 }
 
 function getShellDistribution(z) {
-  /* Thứ tự điền electron theo quy tắc Klechkovsky (n + l) */
+  /* Bảng tra cứu cho các nguyên tố có cấu hình electron ngoại lệ (bán bão hòa / bão hòa) */
+  const EXCEPTIONS = {
+    24:  [2, 8, 13, 1],
+    29:  [2, 8, 18, 1],
+    41:  [2, 8, 18, 12, 1],
+    42:  [2, 8, 18, 13, 1],
+    44:  [2, 8, 18, 15, 1],
+    45:  [2, 8, 18, 16, 1],
+    46:  [2, 8, 18, 18],
+    47:  [2, 8, 18, 18, 1],
+    57:  [2, 8, 18, 18, 9, 2],
+    58:  [2, 8, 18, 19, 9, 2],
+    64:  [2, 8, 18, 25, 9, 2],
+    78:  [2, 8, 18, 32, 17, 1],
+    79:  [2, 8, 18, 32, 18, 1],
+    89:  [2, 8, 18, 32, 18, 9, 2],
+    90:  [2, 8, 18, 32, 18, 10, 2],
+    91:  [2, 8, 18, 32, 20, 9, 2],
+    92:  [2, 8, 18, 32, 21, 9, 2],
+    93:  [2, 8, 18, 32, 22, 9, 2],
+    96:  [2, 8, 18, 32, 25, 9, 2],
+    103: [2, 8, 18, 32, 32, 8, 3],
+    111: [2, 8, 18, 32, 32, 18, 1]
+  };
+
+  if (EXCEPTIONS[z]) {
+    return EXCEPTIONS[z];
+  }
+
   const orbitalOrder = [
-    { n: 1, type: "s", max: 2 },
-    { n: 2, type: "s", max: 2 },
-    { n: 2, type: "p", max: 6 },
-    { n: 3, type: "s", max: 2 },
-    { n: 3, type: "p", max: 6 },
-    { n: 4, type: "s", max: 2 },
-    { n: 3, type: "d", max: 10 },
-    { n: 4, type: "p", max: 6 },
-    { n: 5, type: "s", max: 2 },
-    { n: 4, type: "d", max: 10 },
-    { n: 5, type: "p", max: 6 },
-    { n: 6, type: "s", max: 2 },
-    { n: 4, type: "f", max: 14 },
-    { n: 5, type: "d", max: 10 },
-    { n: 6, type: "p", max: 6 },
-    { n: 7, type: "s", max: 2 },
-    { n: 5, type: "f", max: 14 },
-    { n: 6, type: "d", max: 10 },
+    { n: 1, type: "s", max: 2 }, { n: 2, type: "s", max: 2 }, { n: 2, type: "p", max: 6 },
+    { n: 3, type: "s", max: 2 }, { n: 3, type: "p", max: 6 }, { n: 4, type: "s", max: 2 },
+    { n: 3, type: "d", max: 10 }, { n: 4, type: "p", max: 6 }, { n: 5, type: "s", max: 2 },
+    { n: 4, type: "d", max: 10 }, { n: 5, type: "p", max: 6 }, { n: 6, type: "s", max: 2 },
+    { n: 4, type: "f", max: 14 }, { n: 5, type: "d", max: 10 }, { n: 6, type: "p", max: 6 },
+    { n: 7, type: "s", max: 2 }, { n: 5, type: "f", max: 14 }, { n: 6, type: "d", max: 10 },
     { n: 7, type: "p", max: 6 }
   ];
 
   const shellCounts = {};
   let remaining = z;
-
   for (const orb of orbitalOrder) {
     if (remaining <= 0) break;
     const fill = Math.min(orb.max, remaining);
@@ -195,7 +210,6 @@ function getShellDistribution(z) {
     remaining -= fill;
   }
 
-  /* Chuyển object → mảng theo thứ tự lớp 1, 2, 3... */
   const maxN = Math.max(...Object.keys(shellCounts).map(Number));
   const shells = [];
   for (let n = 1; n <= maxN; n++) {
@@ -203,7 +217,6 @@ function getShellDistribution(z) {
   }
   return shells;
 }
-
 function makeOrbitControls(camera, domElement, target) {
   let isDown = false, px = 0, py = 0;
   let theta = 0, phi = Math.PI / 3, radius = 22;
