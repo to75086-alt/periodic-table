@@ -2,7 +2,9 @@
 
 body {
   font-family: 'Segoe UI', Arial, sans-serif;
-  background: #0a0e1a;
+   background: radial-gradient(ellipse at top, #1e293b 0%, #0a0e1a 50%, #050810 100%);
+  background-attachment: fixed;
+  min-height: 100vh;
   color: #e2e8f0;
   min-height: 100vh;
 }
