@@ -162,13 +162,44 @@ function disposeBohr() {
 }
 
 function getShellDistribution(z) {
-  const maxPerShell = [2, 8, 18, 32, 32, 18, 8];
-  const shells = [];
+  /* Thứ tự điền electron theo quy tắc Klechkovsky (n + l) */
+  const orbitalOrder = [
+    { n: 1, type: "s", max: 2 },
+    { n: 2, type: "s", max: 2 },
+    { n: 2, type: "p", max: 6 },
+    { n: 3, type: "s", max: 2 },
+    { n: 3, type: "p", max: 6 },
+    { n: 4, type: "s", max: 2 },
+    { n: 3, type: "d", max: 10 },
+    { n: 4, type: "p", max: 6 },
+    { n: 5, type: "s", max: 2 },
+    { n: 4, type: "d", max: 10 },
+    { n: 5, type: "p", max: 6 },
+    { n: 6, type: "s", max: 2 },
+    { n: 4, type: "f", max: 14 },
+    { n: 5, type: "d", max: 10 },
+    { n: 6, type: "p", max: 6 },
+    { n: 7, type: "s", max: 2 },
+    { n: 5, type: "f", max: 14 },
+    { n: 6, type: "d", max: 10 },
+    { n: 7, type: "p", max: 6 }
+  ];
+
+  const shellCounts = {};
   let remaining = z;
-  for (let i = 0; i < maxPerShell.length && remaining > 0; i++) {
-    const take = Math.min(maxPerShell[i], remaining);
-    shells.push(take);
-    remaining -= take;
+
+  for (const orb of orbitalOrder) {
+    if (remaining <= 0) break;
+    const fill = Math.min(orb.max, remaining);
+    shellCounts[orb.n] = (shellCounts[orb.n] || 0) + fill;
+    remaining -= fill;
+  }
+
+  /* Chuyển object → mảng theo thứ tự lớp 1, 2, 3... */
+  const maxN = Math.max(...Object.keys(shellCounts).map(Number));
+  const shells = [];
+  for (let n = 1; n <= maxN; n++) {
+    shells.push(shellCounts[n] || 0);
   }
   return shells;
 }
