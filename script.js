@@ -444,18 +444,5 @@ window.addEventListener("resize", () => {
   starfield.appendChild(fragment);
 
   /* Sao băng - thỉnh thoảng bay ngang */
-  function createShootingStar() {
-    const s = document.createElement("div");
-    s.className = "shooting-star";
-    s.style.top = Math.random() * 60 + "%";
-    s.style.left = "-100px";
-    s.style.animationDuration = (Math.random() * 1.5 + 1) + "s";
-    starfield.appendChild(s);
-    setTimeout(() => s.remove(), 3000);
-  }
-
-  /* Tạo sao băng ngẫu nhiên mỗi 3-8 giây */
-  setInterval(() => {
-    if (Math.random() < 0.6) createShootingStar();
-  }, 4000);
+  function createShootingStar()
 })();
