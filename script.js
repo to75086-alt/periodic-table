@@ -467,3 +467,29 @@ window.addEventListener("resize", () => {
     }
   }, 3500);
 })();
+
+/* ============================================================
+   ELEMENT OF THE DAY
+   ============================================================ */
+(function setElementOfTheDay() {
+  const container = document.getElementById("eotd");
+  const nameEl = document.getElementById("eotd-name");
+  if (!container || !nameEl || typeof VALID_ELEMENTS === "undefined") return;
+
+  /* Tính số ngày từ 1/1/2020 → hôm nay */
+  const start = new Date(2020, 0, 1);
+  const now = new Date();
+  const daysPassed = Math.floor((now - start) / (1000 * 60 * 60 * 24));
+
+  /* Chọn nguyên tố theo modulo 118 */
+  const index = daysPassed % VALID_ELEMENTS.length;
+  const todayEl = VALID_ELEMENTS[index];
+
+  /* Hiển thị tên */
+  nameEl.innerHTML = `${todayEl.name} <span class="eotd-symbol">(${todayEl.symbol})</span>`;
+
+  /* Click → mở chi tiết */
+  container.addEventListener("click", () => {
+    showDetail(todayEl);
+  });
+})();
