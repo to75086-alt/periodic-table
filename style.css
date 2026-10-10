@@ -281,3 +281,40 @@ h1 {
 body {
   background: transparent !important;
 }
+/* Sao lớn - có quầng sáng */
+.star.big {
+  background: #bae6fd;
+  box-shadow: 0 0 6px 2px rgba(186, 230, 253, 0.6);
+}
+
+/* Sao băng */
+.shooting-star {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  background: white;
+  border-radius: 50%;
+  box-shadow: 0 0 6px 2px rgba(255, 255, 255, 0.9);
+  animation: shoot linear forwards;
+}
+
+.shooting-star::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 80px;
+  height: 1px;
+  background: linear-gradient(to left, rgba(255,255,255,0.9), transparent);
+}
+
+@keyframes shoot {
+  0% {
+    transform: translateX(0) translateY(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(calc(100vw + 200px)) translateY(40vh);
+    opacity: 0;
+  }
+}
