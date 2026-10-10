@@ -403,31 +403,59 @@ window.addEventListener("resize", () => {
 });
 
 /* ============================================================
-   STARFIELD BACKGROUND
+   STARFIELD BACKGROUND (NÂNG CẤP)
    ============================================================ */
 (function createStars() {
   const starfield = document.getElementById("starfield");
   if (!starfield) return;
 
-  const STAR_COUNT = 200;
+  /* Sao nhỏ - nhiều, lấp lánh */
+  const SMALL_STARS = 400;
   const fragment = document.createDocumentFragment();
 
-  for (let i = 0; i < STAR_COUNT; i++) {
+  for (let i = 0; i < SMALL_STARS; i++) {
     const star = document.createElement("div");
     star.className = "star";
-
-    const size = Math.random() * 1.5 + 1;
+    const size = Math.random() * 1.5 + 0.5;
     star.style.width = size + "px";
     star.style.height = size + "px";
-
     star.style.left = Math.random() * 100 + "%";
     star.style.top = Math.random() * 100 + "%";
-
     star.style.animationDuration = (Math.random() * 3 + 2) + "s";
-    star.style.animationDelay = (Math.random() * 3) + "s";
+    star.style.animationDelay = (Math.random() * 5) + "s";
+    fragment.appendChild(star);
+  }
 
+  /* Sao lớn - có glow, ít hơn */
+  const BIG_STARS = 30;
+  for (let i = 0; i < BIG_STARS; i++) {
+    const star = document.createElement("div");
+    star.className = "star big";
+    const size = Math.random() * 2 + 2;
+    star.style.width = size + "px";
+    star.style.height = size + "px";
+    star.style.left = Math.random() * 100 + "%";
+    star.style.top = Math.random() * 100 + "%";
+    star.style.animationDuration = (Math.random() * 4 + 3) + "s";
+    star.style.animationDelay = (Math.random() * 5) + "s";
     fragment.appendChild(star);
   }
 
   starfield.appendChild(fragment);
+
+  /* Sao băng - thỉnh thoảng bay ngang */
+  function createShootingStar() {
+    const s = document.createElement("div");
+    s.className = "shooting-star";
+    s.style.top = Math.random() * 60 + "%";
+    s.style.left = "-100px";
+    s.style.animationDuration = (Math.random() * 1.5 + 1) + "s";
+    starfield.appendChild(s);
+    setTimeout(() => s.remove(), 3000);
+  }
+
+  /* Tạo sao băng ngẫu nhiên mỗi 3-8 giây */
+  setInterval(() => {
+    if (Math.random() < 0.6) createShootingStar();
+  }, 4000);
 })();
