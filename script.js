@@ -462,7 +462,7 @@ window.addEventListener("resize", () => {
 
   setInterval(() => {
     createShootingStar();
-  }, 10000);
+  }, 30000);
 })();
 
 /* ============================================================
