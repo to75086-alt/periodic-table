@@ -401,3 +401,33 @@ window.addEventListener("resize", () => {
   camera.updateProjectionMatrix();
   renderer.setSize(w, h);
 });
+
+/* ============================================================
+   STARFIELD BACKGROUND
+   ============================================================ */
+(function createStars() {
+  const starfield = document.getElementById("starfield");
+  if (!starfield) return;
+
+  const STAR_COUNT = 200;
+  const fragment = document.createDocumentFragment();
+
+  for (let i = 0; i < STAR_COUNT; i++) {
+    const star = document.createElement("div");
+    star.className = "star";
+
+    const size = Math.random() * 1.5 + 1;
+    star.style.width = size + "px";
+    star.style.height = size + "px";
+
+    star.style.left = Math.random() * 100 + "%";
+    star.style.top = Math.random() * 100 + "%";
+
+    star.style.animationDuration = (Math.random() * 3 + 2) + "s";
+    star.style.animationDelay = (Math.random() * 3) + "s";
+
+    fragment.appendChild(star);
+  }
+
+  starfield.appendChild(fragment);
+})();
