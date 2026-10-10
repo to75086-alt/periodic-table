@@ -287,34 +287,48 @@ body {
   box-shadow: 0 0 6px 2px rgba(186, 230, 253, 0.6);
 }
 
-/* Sao băng */
+/* Sao băng - to và sáng */
 .shooting-star {
   position: absolute;
-  width: 2px;
-  height: 2px;
+  width: 5px;
+  height: 5px;
   background: white;
   border-radius: 50%;
-  box-shadow: 0 0 6px 2px rgba(255, 255, 255, 0.9);
+  box-shadow: 0 0 12px 4px rgba(255, 255, 255, 1),
+              0 0 25px 8px rgba(186, 230, 253, 0.7),
+              0 0 40px 12px rgba(56, 189, 248, 0.4);
   animation: shoot linear forwards;
 }
 
 .shooting-star::before {
   content: "";
   position: absolute;
-  top: 0;
+  top: 1.5px;
   right: 0;
-  width: 80px;
-  height: 1px;
-  background: linear-gradient(to left, rgba(255,255,255,0.9), transparent);
+  width: 280px;
+  height: 3px;
+  background: linear-gradient(to left,
+              rgba(255, 255, 255, 1) 0%,
+              rgba(186, 230, 253, 0.8) 25%,
+              rgba(56, 189, 248, 0.4) 60%,
+              transparent 100%);
+  border-radius: 3px;
+  filter: blur(0.5px);
 }
 
 @keyframes shoot {
   0% {
-    transform: translateX(0) translateY(0);
+    transform: translateX(0);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
     opacity: 1;
   }
   100% {
-    transform: translateX(calc(100vw + 200px)) translateY(40vh);
+    transform: translateX(calc(100vw + 300px));
     opacity: 0;
   }
 }
