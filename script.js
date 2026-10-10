@@ -444,5 +444,26 @@ window.addEventListener("resize", () => {
   starfield.appendChild(fragment);
 
   /* Sao băng - thỉnh thoảng bay ngang */
-  function createShootingStar()
+   function createShootingStar() {
+    const s = document.createElement("div");
+    s.className = "shooting-star";
+
+    s.style.top = Math.random() * 50 + "%";
+    s.style.left = "-150px";
+
+    s.style.animationDuration = (Math.random() * 1.5 + 2) + "s";
+
+    const scale = Math.random() * 0.7 + 0.6;
+    s.style.transform = `scale(${scale})`;
+
+    starfield.appendChild(s);
+    setTimeout(() => s.remove(), 4000);
+  }
+
+  setInterval(() => {
+    const count = Math.floor(Math.random() * 3) + 1;
+    for (let i = 0; i < count; i++) {
+      setTimeout(createShootingStar, Math.random() * 800);
+    }
+  }, 1500);
 })();
