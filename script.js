@@ -461,11 +461,8 @@ window.addEventListener("resize", () => {
   }
 
   setInterval(() => {
-    const count = Math.floor(Math.random() * 2) + 1;
-    for (let i = 0; i < count; i++) {
-      setTimeout(createShootingStar, Math.random() * 1500);
-    }
-  }, 3500);
+    createShootingStar();
+  }, 10000);
 })();
 
 /* ============================================================
